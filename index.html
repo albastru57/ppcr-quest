@@ -1,102 +1,53 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PPCR Quest</title>
-<style>
-body{margin:0;background:#f5f7fb;font-family:Arial,Tahoma,sans-serif;color:#172033}
-.wrap{max-width:760px;margin:auto;padding:16px}.hero{background:#3157d5;color:#fff;padding:22px;border-radius:20px}
-.card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:18px;margin-top:16px}
-.top{display:flex;justify-content:space-between;gap:10px;align-items:center}.topic{background:#eef2ff;color:#2439a8;padding:6px 10px;border-radius:999px;font-size:13px}
-.progress{height:9px;background:#edf0f5;border-radius:99px;overflow:hidden;margin:14px 0}.bar{height:100%;background:#3157d5;width:0}
-.q{font-size:20px;line-height:1.6}.sub{color:#6b7280;margin:6px 0 12px}.answers{display:grid;gap:10px}
-.choice{width:100%;text-align:right;background:#fff;border:1px solid #dfe3ea;border-radius:12px;padding:13px;font-size:16px}
-.correct{background:#eefbf2!important;border-color:#86d19c!important}.wrong{background:#fff1f1!important;border-color:#ef9a9a!important}
-.feedback{display:none;margin-top:14px;padding:14px;border-radius:12px;line-height:1.7}.ok{display:block;background:#eefbf2}.bad{display:block;background:#fff4f4}
-.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:700;margin-top:12px}.primary{background:#3157d5;color:#fff}.secondary{background:#eef1f6}.hidden{display:none!important}
-.score{text-align:center;font-size:48px;font-weight:800;color:#3157d5}table{width:100%;border-collapse:collapse}td,th{padding:9px;border-bottom:1px solid #e5e7eb;text-align:right}
-.good{color:#15803d}.weak{color:#b91c1c}
-</style>
-</head>
-<body><div class="wrap">
-<div class="hero"><h1>PPCR Quest 🧪</h1><p>اختبار تفاعلي: الأسئلة بالإنجليزية والشرح بالعربي بعد كل إجابة.</p></div>
-<div id="quiz" class="card">
-<div class="top"><div id="count"></div><div id="topic" class="topic"></div></div>
-<div class="progress"><div id="bar" class="bar"></div></div>
-<div id="q" class="q"></div><div id="sub" class="sub"></div><div id="answers" class="answers"></div>
-<div id="feedback" class="feedback"></div><button id="next" class="btn primary hidden">التالي</button>
-</div>
-<div id="result" class="card hidden">
-<div>النتيجة النهائية</div><div id="score" class="score"></div><div id="grade"></div><div id="summary"></div>
-<button id="retry" class="btn primary">إعادة الاختبار</button>
-<button id="review" class="btn secondary">مراجعة الأخطاء فقط</button>
-</div>
-</div>
-<script>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PPCR Quest Smart</title><style>body{margin:0;background:#f5f7fb;font-family:Arial,Tahoma,sans-serif;color:#172033}.w{max-width:760px;margin:auto;padding:16px}.h{background:#3157d5;color:#fff;padding:22px;border-radius:20px}.c{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:18px;margin-top:16px}.top{display:flex;justify-content:space-between}.tag{background:#eef2ff;color:#2439a8;padding:6px 10px;border-radius:99px}.p{height:9px;background:#edf0f5;border-radius:99px;overflow:hidden;margin:14px 0}.bar{height:100%;background:#3157d5}.q{font-size:20px;line-height:1.6}.sub{color:#6b7280;margin:6px 0 12px}.ans{display:grid;gap:10px}.ch{width:100%;text-align:right;background:#fff;border:1px solid #dfe3ea;border-radius:12px;padding:13px;font-size:16px}.ok{background:#eefbf2!important;border-color:#86d19c!important}.bad{background:#fff1f1!important;border-color:#ef9a9a!important}.fb{margin-top:14px;padding:14px;border-radius:12px}.btn{border:0;border-radius:11px;padding:12px 16px;font-weight:700;margin-top:12px}.pri{background:#3157d5;color:#fff}.sec{background:#eef1f6}.hide{display:none}.score{text-align:center;font-size:48px;font-weight:800;color:#3157d5}input{width:95%;padding:13px;border:1px solid #ddd;border-radius:12px;font-size:16px}</style></head><body><div class="w"><div class="h"><h1>PPCR Quest 🧪</h1><p>اختبار ذكي: الأسئلة تتغير، ومكان الإجابة الصحيحة موزع بالتساوي تقريبًا بين A/B/C/D ولا يتكرر نفس المكان 3 مرات متتالية.</p></div><div id="start" class="c"><h2>ابدأ الاختبار</h2><input id="name" placeholder="الاسم"><br><button class="btn pri" onclick="startQuiz()">ابدأ</button></div><div id="quiz" class="c hide"><div class="top"><span id="cnt"></span><span id="topic" class="tag"></span></div><div class="p"><div id="bar" class="bar"></div></div><div id="q" class="q"></div><div id="sub" class="sub"></div><div id="ans" class="ans"></div><div id="fb" class="fb hide"></div><button id="next" class="btn pri hide" onclick="nextQ()">التالي</button></div><div id="res" class="c hide"><div>النتيجة النهائية</div><div id="score" class="score"></div><div id="grade"></div><div id="details"></div><button class="btn pri" onclick="startQuiz()">إعادة الاختبار</button><button class="btn sec" onclick="shareResult()">مشاركة النتيجة</button><button class="btn sec" onclick="wa()">إرسال عبر واتساب</button></div></div><script>
 const Q=[
-["Data Types","Which of the following is a continuous variable?","اختر المتغير الرقمي المستمر.",["Sex","Treatment group","Blood pressure","Smoking status"],2,"ضغط الدم قيمة رقمية قابلة للقياس، لذلك هو Continuous variable."],
-["Plots","You want to visualize the distribution of patients' ages. Which plot is most appropriate?","أعمار المرضى = متغير رقمي واحد.",["Bar chart","Histogram","Pie chart","Scatter plot"],1,"Histogram يُستخدم لعرض Distribution لمتغير رقمي مستمر واحد."],
-["Plots","Which plot is best for comparing blood pressure between Drug A and Drug B and spotting potential outliers?","مقارنة قيمة رقمية بين مجموعتين.",["Boxplot","Pie chart","Line plot","Bar chart"],0,"Boxplot ممتاز للمقارنة بين المجموعات ويعرض Median وPotential outliers."],
-["Plots","Which plot is used to visualize the relationship between age and blood pressure?","متغيران رقميان.",["Scatter plot","Histogram","Pie chart","Bar chart"],0,"Scatter plot يُستخدم للعلاقة بين متغيرين Continuous."],
-["Plots","You want to compare the number of patients in Drug A, Drug B, and Drug C. Which plot?","هذه Categories.",["Histogram","Bar chart","Q-Q plot","Density plot"],1,"Bar chart مناسب للفئات والأعداد أو النسب."],
-["Plots","Which plot is most appropriate to show how IOP changes from baseline to week 12?","تغير عبر الزمن.",["Line plot","Pie chart","Histogram","Boxplot"],0,"Line plot يعرض Trend أو Change over time."],
-["Normality","How would you visually check the normality assumption?","سؤال امتحاني مهم.",["Only by the mean","Inspect the histogram and Q-Q plot","Use a bar chart","Use Fisher's exact test"],1,"افحص Histogram وQ-Q plot. إذا كانت النقاط تتبع الخط تقريبًا فـ normality assumption reasonable."],
-["Normality","In a Q-Q plot, points approximately following the reference line suggest:","فحص بصري.",["Strong non-normality","Approximately normal distribution","Equal variances","Categorical outcome"],1,"النقاط القريبة تقريبًا من الخط تدعم Normality."],
-["Normality","Shapiro-Wilk test is primarily used to assess:","ما الذي يفحصه؟",["Equal variances","Normality","Correlation","Categorical independence"],1,"Shapiro-Wilk يفحص Normality."],
-["Normality","Shapiro-Wilk gives p = 0.20. At α = 0.05, the best interpretation is:","لا تقل Normal 100%.",["Strong evidence against normality","Normality assumption is not rejected","Variances are equal","Means are equal"],1,"لأن p>0.05 لا نرفض H₀ الخاصة بالطبيعية."],
-["Normality","Shapiro-Wilk gives p = 0.01. What does this suggest?","p أصغر من 0.05.",["Evidence against normality","Proof data are normal","Equal variances","No relationship"],0,"p<0.05 يعطي دليلًا ضد Normality."],
-["Assumptions","Levene's test is used to assess:","ما الذي يفحصه؟",["Normality","Equal variances","Median difference","Correlation"],1,"Levene's test يفحص Equality/Homogeneity of variances."],
-["Assumptions","Levene's test gives p = 0.32. Best interpretation?","H₀ هنا تخص التباينات.",["Variances clearly differ","Equal variance assumption is not rejected","Data definitely normal","Means are equal"],1,"p>0.05: لا يوجد دليل كافٍ على اختلاف التباينات."],
-["Groups","Drug A is given to 50 patients and Drug B to 50 different patients. These groups are:","أشخاص مختلفون.",["Paired","Independent","Binary","Repeated measures"],1,"Different people → Independent groups."],
-["Groups","Blood pressure is measured in the same patients before and after treatment. These measurements are:","نفس الأشخاص مرتين.",["Independent","Paired","Categorical","Unrelated"],1,"Same people measured twice → Paired."],
-["Statistical Tests","One group is compared with a reference value. Which parametric test is appropriate?","مجموعة مقابل قيمة ثابتة.",["One-sample t-test","Paired t-test","ANOVA","Chi-square"],0,"One group vs reference → One-sample t-test."],
-["Statistical Tests","Two independent groups with a continuous outcome are compared. Which parametric test?","Drug A vs Drug B.",["Paired t-test","Independent / two-sample t-test","ANOVA","Fisher's exact"],1,"2 independent groups → Independent t-test."],
-["Statistical Tests","Common non-parametric alternative to the independent t-test?","بديل لمجموعتين مستقلتين.",["Wilcoxon signed-rank","Mann–Whitney U","Kruskal–Wallis","Pearson"],1,"2 independent groups → Mann–Whitney U."],
-["Statistical Tests","The same patients are measured before and after treatment. Which parametric test?","نفس الأشخاص.",["Independent t-test","Paired t-test","ANOVA","Chi-square"],1,"Paired measurements → Paired t-test."],
-["Statistical Tests","Common non-parametric alternative to the paired t-test?","قياسات مرتبطة.",["Mann–Whitney U","Wilcoxon signed-rank","Kruskal–Wallis","Fisher's exact"],1,"Paired → Wilcoxon signed-rank."],
-["Statistical Tests","Compare mean blood pressure across Drug A, Drug B, and Drug C. Which parametric test?","3+ مجموعات مستقلة.",["ANOVA","Paired t-test","Chi-square","One-sample t-test"],0,"3+ independent groups → ANOVA."],
-["Statistical Tests","Common non-parametric alternative to one-way ANOVA for 3+ independent groups?","بديل غير معلمي.",["Kruskal–Wallis","Mann–Whitney U","Wilcoxon signed-rank","Pearson"],0,"3+ independent groups → Kruskal–Wallis."],
-["Correlation","Which test is used for a linear relationship between two continuous variables when assumptions are appropriate?","Age وBlood Pressure.",["Pearson correlation","Chi-square","ANOVA","Fisher's exact"],0,"Pearson يقيس الارتباط الخطي بين متغيرين رقميين."],
-["Correlation","What is a common rank-based alternative to Pearson correlation?","بديل شائع.",["Spearman correlation","Levene's test","ANOVA","One-sample t-test"],0,"Spearman يعتمد على الرتب."],
-["Categorical","Association between treatment group (A/B) and recovery (Yes/No). Which test is usually considered?","Categorical × Categorical.",["Chi-square","Paired t-test","Pearson","ANOVA"],0,"Categorical × categorical → Chi-square عادةً."],
-["Categorical","If expected cell counts are very small in a 2×2 table, which test may be preferred?","خلايا صغيرة.",["Fisher's exact","ANOVA","Shapiro-Wilk","Paired t-test"],0,"Fisher's exact مناسب عندما تكون expected cell counts صغيرة."],
-["Regression","Which method is commonly used when the outcome is binary (Yes/No) and there are predictors?","مثال: Disease Yes/No + age + smoking.",["Logistic regression","Linear correlation only","Histogram","Levene's test"],0,"Binary outcome + predictors → Logistic regression."],
-["p-value & H₀","At α = 0.05, p < 0.05 generally means:","التفسير العام.",["Evidence against the null hypothesis","H₀ is proven true","Effect is always clinically important","Data are always normal"],0,"p<0.05 تعني evidence against H₀ عند α=0.05."],
-["p-value & H₀","For an independent t-test, the usual null hypothesis is:","H₀ في t-test.",["The group means are equal","Variables are categorical","Data are normal","Variances are unequal"],0,"H₀: population means are equal."],
-["p-value & H₀","For a chi-square test of independence, the null hypothesis is:","H₀ هنا.",["The categorical variables are independent","All means are equal","Correlation = 1","Data are normal"],0,"H₀: المتغيران الفئويان مستقلان."],
-["p-value & H₀","Why is it wrong to memorize 'p > 0.05 = good' and 'p < 0.05 = bad'?","فكرة أساسية.",["Every test has a different null hypothesis","p-values are never used","0.05 is always wrong","All tests have identical hypotheses"],0,"معنى p-value يعتمد على الاختبار وعلى Null hypothesis الخاصة به."],
-["Effect Size","Control risk is 10% and treatment risk is 5%. What is the ARR?","Absolute Risk Reduction.",["5 percentage points","50%","10%","20%"],0,"ARR = 10% − 5% = 5 percentage points."],
-["Effect Size","Control risk is 10% and treatment risk is 5%. What is the RRR?","Relative Risk Reduction.",["5%","50%","10%","20%"],1,"RRR = (10−5)/10 = 50%."],
-["Effect Size","If ARR = 5% (0.05), what is the NNT?","NNT = 1 / ARR.",["5","10","20","50"],2,"NNT = 1/0.05 = 20."],
-["Effect Size","What does NNT = 23 mean?","التفسير السريري.",["Treat 23 patients for one additional beneficial outcome vs control","23% will benefit","23 will definitely be cured","No effect"],0,"NNT=23 يعني علاج 23 مريضًا لتحقيق فائدة إضافية واحدة مقارنة بالـcontrol."],
-["Effect Size","Cohen's d is mainly used to describe:","ماذا يقيس؟",["Standardized difference between two means","ARR","NNT","Normality"],0,"Cohen's d يقيس حجم الفرق المعياري بين متوسطين."],
-["Effect Size","Using the common rule of thumb, Cohen's d = 0.8 suggests:","قاعدة تقريبية.",["Small effect","Medium effect","Large effect","No effect"],2,"تقريبًا: 0.2 small، 0.5 medium، 0.8 large."]
-];
-
-let order=[...Q.keys()],pos=0,score=0,wrong=[],stats={},answered=false;
-const E=id=>document.getElementById(id),pct=(a,b)=>b?Math.round(100*a/b):0;
-function render(){
- answered=false; const x=Q[order[pos]];
- E("count").textContent=`السؤال ${pos+1} من ${order.length}`; E("topic").textContent=x[0];
- E("bar").style.width=`${100*pos/order.length}%`; E("q").textContent=x[1]; E("sub").textContent=x[2];
- E("answers").innerHTML=""; E("feedback").className="feedback"; E("feedback").innerHTML=""; E("next").classList.add("hidden");
- x[3].forEach((t,i)=>{let b=document.createElement("button");b.className="choice";b.textContent=t;b.onclick=()=>choose(i,b);E("answers").appendChild(b)});
-}
-function choose(i,b){
- if(answered)return; answered=true; const qi=order[pos],x=Q[qi],bs=[...document.querySelectorAll(".choice")];
- stats[x[0]]??={r:0,t:0}; stats[x[0]].t++;
- if(i===x[4]){score++;stats[x[0]].r++;b.classList.add("correct");E("feedback").className="feedback ok";E("feedback").innerHTML=`✅ <b>صحيح</b><br>${x[5]}`}
- else{wrong.push(qi);b.classList.add("wrong");bs[x[4]].classList.add("correct");E("feedback").className="feedback bad";E("feedback").innerHTML=`❌ <b>تحتاج مراجعة</b><br>${x[5]}`}
- bs.forEach(z=>z.disabled=true);E("next").classList.remove("hidden");
-}
-E("next").onclick=()=>{pos++;pos<order.length?render():finish()};
-function finish(){
- E("quiz").classList.add("hidden");E("result").classList.remove("hidden");let p=pct(score,order.length);
- E("score").textContent=p+"%";E("grade").textContent=p>=90?"ممتاز جدًا 🏆":p>=80?"ممتاز 👏":p>=70?"جيد جدًا":p>=60?"جيد — راجع نقاط الضعف":"تحتاج مراجعة مركزة";
- let h="<table><tr><th>الموضوع</th><th>النتيجة</th></tr>";for(const [k,v] of Object.entries(stats)){let z=pct(v.r,v.t);h+=`<tr><td>${k}</td><td class="${z>=70?'good':'weak'}">${v.r}/${v.t} — ${z}%</td></tr>`}h+="</table>";E("summary").innerHTML=h;
-}
-function reset(o){order=o;pos=0;score=0;wrong=[];stats={};E("result").classList.add("hidden");E("quiz").classList.remove("hidden");render()}
-E("retry").onclick=()=>reset([...Q.keys()]);
-E("review").onclick=()=>{if(wrong.length)reset([...wrong])};
-render();
-</script></body></html>
+['Plots','A histogram is mainly used to show:','',['Distribution of one continuous variable','Association between two categorical variables','Change over time','Paired observations'],0,'Histogram يعرض توزيع متغير رقمي مستمر واحد.'],
+['Plots','Which plot is best for comparing a continuous variable between groups and spotting outliers?','',['Boxplot','Pie chart','Line plot','Histogram'],0,'Boxplot يقارن المجموعات ويظهر Median وOutliers.'],
+['Plots','Which plot shows the relationship between two continuous variables?','',['Scatter plot','Bar chart','Pie chart','Q-Q plot'],0,'Scatter plot للعلاقة بين متغيرين continuous.'],
+['Plots','Which plot is mainly used for categorical frequencies or proportions?','',['Bar chart','Histogram','Density plot','Q-Q plot'],0,'Bar chart للـcategorical data.'],
+['Plots','Which plot is best for showing change in IOP over several follow-up visits?','',['Line plot','Pie chart','Histogram','Boxplot'],0,'Line plot يعرض التغير عبر الزمن.'],
+['Plots','A Q-Q plot is mainly used to visually assess:','',['Normality','Equal variances','Sample size','Risk reduction'],0,'Q-Q plot لفحص Normality بصريًا.'],
+['Plots','A density plot is most similar in purpose to:','',['Histogram','Chi-square test','Pie chart','Logistic regression'],0,'Density plot يعرض شكل distribution بمنحنى ناعم.'],
+['Plots','Which plot represents categories as parts of a whole?','',['Pie chart','Scatter plot','Q-Q plot','Boxplot'],0,'Pie chart يعرض proportions of a whole.'],
+['Normality','In a Q-Q plot, points close to the reference line suggest:','',['Approximate normality','Unequal variances','Strong correlation','Binary data'],0,'النقاط القريبة من الخط تدعم normality.'],
+['Normality','Shapiro-Wilk test assesses:','',['Normality','Equal variances','Correlation','Independence'],0,'Shapiro-Wilk يفحص Normality.'],
+['Normality','Shapiro-Wilk gives p = 0.20 at α=0.05. Best interpretation?','',['Normality assumption is not rejected','Data are definitely non-normal','Means are equal','Variances are unequal'],0,'p>0.05: لا نرفض فرضية normality.'],
+['Normality','Shapiro-Wilk gives p = 0.01 at α=0.05. This suggests:','',['Evidence against normality','Proof of normality','Equal variances','No treatment effect'],0,'p<0.05 يعطي evidence against normality.'],
+['Assumptions','Levene’s test assesses:','',['Equality of variances','Normality','Correlation','Risk ratio'],0,'Levene يفحص Equal variances.'],
+['Assumptions','Levene’s test gives p = 0.32. Best interpretation?','',['Equal variance assumption is not rejected','Variances definitely differ','Data are normal','Means are equal'],0,'p>0.05: لا يوجد دليل كافٍ على اختلاف التباينات.'],
+['Groups','Drug A has 50 patients and Drug B has 50 different patients. The groups are:','',['Independent','Paired','Repeated in same patients','Binary'],0,'أشخاص مختلفون = Independent groups.'],
+['Groups','The same patients are measured before and after treatment. The measurements are:','',['Paired','Independent','Categorical','Unrelated'],0,'نفس الأشخاص مرتين = Paired.'],
+['Tests','One group vs a reference value: which parametric test?','',['One-sample t-test','Independent t-test','ANOVA','Chi-square'],0,'One group vs reference → One-sample t-test.'],
+['Tests','Two independent groups with a continuous outcome: which parametric test?','',['Independent / two-sample t-test','Paired t-test','ANOVA','Fisher exact'],0,'2 independent groups → Independent t-test.'],
+['Tests','Non-parametric alternative for two independent groups?','',['Mann–Whitney U','Wilcoxon signed-rank','Kruskal–Wallis','Pearson'],0,'2 independent groups → Mann–Whitney U.'],
+['Tests','Same patients before and after treatment: which parametric test?','',['Paired t-test','Independent t-test','ANOVA','Chi-square'],0,'Paired measurements → Paired t-test.'],
+['Tests','Non-parametric alternative to paired t-test?','',['Wilcoxon signed-rank','Mann–Whitney U','Kruskal–Wallis','Fisher exact'],0,'Paired → Wilcoxon signed-rank.'],
+['Tests','Three or more independent groups with continuous outcome: which parametric test?','',['ANOVA','Paired t-test','Chi-square','One-sample t-test'],0,'3+ independent groups → ANOVA.'],
+['Tests','Non-parametric alternative for 3+ independent groups?','',['Kruskal–Wallis','Mann–Whitney U','Wilcoxon signed-rank','Pearson'],0,'3+ independent groups → Kruskal–Wallis.'],
+['Correlation','Linear relationship between two continuous variables, assumptions met:','',['Pearson correlation','Chi-square','ANOVA','Fisher exact'],0,'Pearson للارتباط الخطي بين متغيرين continuous.'],
+['Correlation','Rank-based alternative to Pearson correlation:','',['Spearman correlation','Levene test','ANOVA','One-sample t-test'],0,'Spearman يعتمد على الرتب.'],
+['Categorical','Treatment group A/B versus recovery Yes/No: which test is usually considered?','',['Chi-square','Paired t-test','Pearson','ANOVA'],0,'Categorical × categorical → Chi-square.'],
+['Categorical','Expected cell counts are very small in a 2×2 table. Which may be preferred?','',['Fisher’s exact test','ANOVA','Shapiro-Wilk','Paired t-test'],0,'Fisher exact مناسب للخلايا المتوقعة الصغيرة.'],
+['Regression','Binary outcome plus predictors: which method?','',['Logistic regression','Histogram','Levene test','Pearson only'],0,'Binary outcome + predictors → Logistic regression.'],
+['p-value & H0','At α=0.05, p<0.05 generally means:','',['Evidence against the null hypothesis','H0 is proven true','Effect is always clinically important','Data are always normal'],0,'p<0.05 يعني evidence against H0.'],
+['p-value & H0','For an independent t-test, the usual H0 is:','',['The population means are equal','The variables are categorical','The data are always normal','The variances must differ'],0,'H0 في t-test: means are equal.'],
+['p-value & H0','For ANOVA, the usual H0 is:','',['All group means are equal','All groups have different means','All data are categorical','Correlation equals one'],0,'ANOVA H0: all group means are equal.'],
+['p-value & H0','For a chi-square test of independence, H0 is:','',['The categorical variables are independent','All means are equal','Data are normal','Correlation is 1'],0,'H0: المتغيران الفئويان مستقلان.'],
+['p-value & H0','For Pearson correlation, the usual H0 is:','',['Population linear correlation equals 0','Means are equal','Variances are equal','Data are categorical'],0,'Pearson H0: population linear correlation = 0.'],
+['p-value & H0','Why is “p>0.05 good, p<0.05 bad” a poor rule?','',['Because interpretation depends on the test and its null hypothesis','Because p-values are never used','Because 0.05 is illegal','Because all tests have the same H0'],0,'لازم تعرف p-value لأي test وما هي H0.'],
+['Effect Size','Control risk 10%, treatment risk 5%. ARR equals:','',['5 percentage points','50%','10%','20%'],0,'ARR = 10%-5% = 5 percentage points.'],
+['Effect Size','Control risk 10%, treatment risk 5%. RRR equals:','',['50%','5%','10%','20%'],0,'RRR=(10-5)/10=50%.'],
+['Effect Size','If ARR=0.05, NNT equals:','',['20','5','10','50'],0,'NNT=1/0.05=20.'],
+['Effect Size','NNT=23 means:','',['Treat 23 patients for one additional beneficial outcome versus control','23% will benefit','23 patients are guaranteed cure','Treatment has no effect'],0,'NNT=23 يعني علاج 23 مريضًا لتحقيق فائدة إضافية واحدة مقارنة بالـcontrol.'],
+['Effect Size','Cohen’s d mainly describes:','',['Standardized difference between two means','Absolute risk reduction','Number needed to treat','Normality'],0,'Cohen’s d هو standardized effect size بين متوسطين.'],
+['Effect Size','Cohen’s d=0.8 is commonly interpreted as:','',['Large effect','Small effect','Medium effect','No effect'],0,'0.8 تقريبًا Large effect.'],
+['Effect Size','Cohen’s d=0.5 is commonly interpreted as:','',['Medium effect','Small effect','Large effect','No effect'],0,'0.5 تقريبًا Medium effect.'],
+['Effect Size','Cohen’s d=0.2 is commonly interpreted as:','',['Small effect','Medium effect','Large effect','No effect'],0,'0.2 تقريبًا Small effect.'],
+['Effect Size','Which measure describes absolute decrease in risk?','',['ARR','RRR','Cohen’s d','Pearson r'],0,'ARR = Absolute Risk Reduction.'],
+['Effect Size','Which measure describes decrease relative to the original risk?','',['RRR','ARR','NNT','Cohen’s d'],0,'RRR = Relative Risk Reduction.'],
+['Effect Size','For the same outcome and follow-up, a smaller NNT generally suggests:','',['Greater absolute treatment benefit','No treatment effect','More non-normality','Smaller sample size'],0,'NNT أصغر يعني فائدة مطلقة أكبر عمومًا.'],
+['Decision','What should you identify first when choosing a statistical test?','',['The type of outcome variable','Always the p-value first','Always ANOVA','The graph color'],0,'ابدأ بنوع Outcome.'],
+['Decision','After identifying outcome type, what is an important next question?','',['How many groups and whether they are independent or paired','Which answer letter looks common','Whether p is always below 0.05','Whether a pie chart is available'],0,'حدد عدد المجموعات وهل هي Independent أو Paired.'],
+['Decision','Before choosing a parametric test, you should consider:','',['Relevant assumptions such as normality and equal variances','Only sample names','Only the largest value','Only whether the result is significant'],0,'افحص assumptions المناسبة.'],
+['Plots','Which two tools together are commonly used for visual normality assessment?','',['Histogram and Q-Q plot','Bar chart and pie chart','Scatter plot and Fisher test','Line plot and Chi-square'],0,'Histogram + Q-Q plot لفحص normality بصريًا.'],
+['Assumptions','A strongly skewed histogram may suggest:','',['Possible non-normality','Guaranteed equal variances','Perfect normality','A binary outcome'],0,'Skewness الواضح قد يشير إلى non-normality.']];
+let order=[],pos=0,score=0,wrong=[],stats={},name='Student',layouts={};const $=id=>document.getElementById(id);function sh(a){a=[...a];for(let i=a.length-1;i;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}function positions(n){let a=[];for(let i=0;i<n;i++)a.push(i%4);for(let t=0;t<1000;t++){let b=sh(a),ok=true;for(let i=2;i<n;i++)if(b[i]==b[i-1]&&b[i]==b[i-2]){ok=false;break}if(ok)return b}return sh(a)}function prep(){layouts={};let ps=positions(order.length);order.forEach((qi,k)=>{let correct=Q[qi][4],target=ps[k],w=sh([0,1,2,3].filter(x=>x!=correct)),l=new Array(4),z=0;l[target]=correct;for(let p=0;p<4;p++)if(p!=target)l[p]=w[z++];layouts[qi]=l})}function startQuiz(){name=$('name').value.trim()||name;order=sh([...Q.keys()]);pos=score=0;wrong=[];stats={};prep();$('start').classList.add('hide');$('res').classList.add('hide');$('quiz').classList.remove('hide');render()}function render(){let qi=order[pos],x=Q[qi];$('cnt').textContent=`السؤال ${pos+1} من ${order.length}`;$('topic').textContent=x[0];$('bar').style.width=(100*pos/order.length)+'%';$('q').textContent=x[1];$('sub').textContent=x[2];$('ans').innerHTML='';$('fb').classList.add('hide');$('next').classList.add('hide');layouts[qi].forEach(i=>{let b=document.createElement('button');b.className='ch';b.textContent=x[3][i];b.dataset.i=i;b.onclick=()=>choose(i,b);$('ans').appendChild(b)})}function choose(i,b){let qi=order[pos],x=Q[qi],bs=[...document.querySelectorAll('.ch')];if(bs[0].disabled)return;stats[x[0]]??={r:0,t:0};stats[x[0]].t++;if(i==x[4]){score++;stats[x[0]].r++;b.classList.add('ok');$('fb').innerHTML='✅ <b>صحيح</b><br>'+x[5]}else{wrong.push(qi);b.classList.add('bad');bs.find(z=>+z.dataset.i==x[4]).classList.add('ok');$('fb').innerHTML='❌ <b>تحتاج مراجعة</b><br>'+x[5]}bs.forEach(z=>z.disabled=true);$('fb').classList.remove('hide');$('next').classList.remove('hide')}function nextQ(){if(++pos<order.length)render();else finish()}function finish(){$('quiz').classList.add('hide');$('res').classList.remove('hide');let p=Math.round(100*score/order.length);$('score').textContent=p+'%';$('grade').textContent=name+' — '+score+'/'+order.length;let h='<table>';for(let[k,v]of Object.entries(stats))h+=`<tr><td>${k}</td><td>${v.r}/${v.t}</td></tr>`;$('details').innerHTML=h+'</table>'}function txt(){return `PPCR Quest - ${name}\nالنتيجة: ${score}/${order.length} (${Math.round(100*score/order.length)}%)\nالأخطاء: ${wrong.length}`}async function shareResult(){if(navigator.share)await navigator.share({title:'PPCR Quest Result',text:txt()});else{await navigator.clipboard.writeText(txt());alert('تم نسخ النتيجة')}}function wa(){window.open('https://wa.me/?text='+encodeURIComponent(txt()),'_blank')}</script></body></html>
